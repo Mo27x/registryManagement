@@ -1,5 +1,4 @@
 let towns = [];
-let fiscalCode = "";
 
 $(document).ready(function () {
   $.get("getTown.php", function (result) {
@@ -51,6 +50,7 @@ const controlVatNumber = () => {
 };
 
 const controlFiscalCode = () => {
+  let fiscalCode = "";
   fiscalCode +=
     getNames("lname", 3) +
     getNames("fname", 4) +
