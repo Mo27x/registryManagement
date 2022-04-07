@@ -1,80 +1,77 @@
 let towns = [];
+let fiscalCode = "";
 
 $(document).ready(function () {
   $.get("getTown.php", function (result) {
     towns = JSON.parse(result);
+    let $el = $("#birthPlace");
+    $el.empty();
+    $.each(towns, function () {
+      $el.append(
+        $("<option></option>").attr("value", this.nome).text(this.nome)
+      );
+    });
+    $el = $("#town");
+    $el.empty();
+    $.each(towns, function () {
+      $el.append(
+        $("<option></option>").attr("value", this.nome).text(this.nome)
+      );
+    });
+    const changeSelected = () => {
+      const $birth = document.querySelector("#birthPlace");
+      $birth.value = "Rimini";
+      const $residence = document.querySelector("#town");
+      $birth.value = "Rimini";
+    };
   });
-  let $el = $("#birthPlace");
-  $el.empty();
-  $.each(towns, function () {
-    $el.append($("<option></option>").attr("value", this.nome).text(this.nome));
-  });
-  let $el = $("#town");
-  $el.empty();
-  $.each(towns, function () {
-    $el.append($("<option></option>").attr("value", this.nome).text(this.nome));
-  });
-});
-
-$("#update").click(() => {
-  $("#update").remove();
-  $("#from").append('<button id="cancel">Cancel</button>');
-  $("#from").append('<button id="confirm">Confirm</button>');
-});
-
-$("#cancel").click(() => {
-  $("#cancel").remove();
-  $("#confirm").remove();
-  $("#form").append('<button id="update">Update</button>');
-});
-
-$("#confirm").click(() => {
-  $("#cancel").remove();
-  $("#confirm").remove();
-  const dataToChange = {
-    street: document.getElementById("street"),
-    houseNumber: document.getElementById("houseNumber"),
-    vatNumber: document.getElementById("vatNumber"),
-    fiscalCode: document.getElementById("fiscalCode"),
+  document.getElementById("town").onchange = function () {
+    var value = document.getElementById("town").value;
+    $("#cap").val(getCap(value));
   };
-  $.post("updateCitizen.php", dataToChange, (data, status) => {
-    if (data == "true") {
-    }
-  });
-  $("#form").append('<button id="update">Update</button>');
 });
 
 const control = () => {
-  if (controlFiscalCode() && controlVatNumber()) {
-    const citizen = {
-      lname: document.getElementById("lname").value,
-      fname: document.getElementById("fname").value,
-      gender: getGender(),
-      dateOfBirth: document.getElementById("dateOfBirth").value,
+  if (fiscalCode === "") {
+    if (controlFiscalCode() && controlVatNumber()) {
+      const citizen = {
+        lname: document.getElementById("lname").value,
+        fname: document.getElementById("fname").value,
+        gender: getGender(),
+        dateOfBirth: document.getElementById("dateOfBirth").value,
+        street: document.getElementById("street").value,
+        birthPlaceCadastralCode: getCadastralCode(
+          document.getElementById("birthPlace").value
+        ),
+        residencePlaceCadastralCode: getCadastralCode(
+          document.getElementById("town").value
+        ),
+        houseNumber: document.getElementById("houseNumber").value,
+        fiscalCode: fiscalCode,
+        vatNumber: document.getElementById("vatNumber").value,
+      };
+      $.post("addCitizen.php", citizen, (data, status) => {
+        if (data == "true") {
+          jQuery("#lname").prop("readonly", true);
+          $("#fname").prop("readonly", true);
+          $("#male").prop("readonly", true);
+          $("#female").prop("readonly", true);
+          $("#dateOfBirth").prop("readonly", true);
+          $("#birthPlace").prop("disabled", true);
+          $("#town").prop("disabled", true);
+          $("#fiscalCode").prop("readonly", true);
+        }
+      });
+    }
+  } else {
+    const dataToChange = {
       street: document.getElementById("street").value,
-      birthPlaceCadastralCode: getCadastralCode(
-        document.getElementById("birthPlace").value
-      ),
-      residencePlaceCadastralCode: getCadastralCode(
-        document.getElementById("town").value
-      ),
       houseNumber: document.getElementById("houseNumber").value,
-      fiscalCode: fiscalCode,
       vatNumber: document.getElementById("vatNumber").value,
+      fiscalCode: document.getElementById("fiscalCode").value,
     };
-    $.post("addCitizen.php", citizen, (data, status) => {
-      if (data == "true") {
-        $("#lname").prop("readonly", true);
-        $("#fname").prop("readonly", true);
-        $("#male").prop("readonly", true);
-        $("#female").prop("readonly", true);
-        $("#dateOfBirth").prop("readonly", true);
-        $("#birthPlace").prop("readonly", true);
-        $("#town").prop("readonly", true);
-        $("#fiscalCode").prop("readonly", true);
-        $("#send").remove();
-        $("#form").append('<button id="update">Update</button>');
-      }
+    $.post("updateCitizen.php", dataToChange, (data, status) => {
+      alert(data);
     });
   }
   return false;
@@ -99,7 +96,7 @@ const controlVatNumber = () => {
 };
 
 const controlFiscalCode = () => {
-  let fiscalCode = "";
+  fiscalCode = "";
   fiscalCode +=
     getNames("lname", 3) +
     getNames("fname", 4) +
@@ -107,10 +104,8 @@ const controlFiscalCode = () => {
     getMonth() +
     getDay() +
     getCadastralCode(document.getElementById("birthPlace").value);
-  fiscalCode += getControlLetter();
-  return (
-    fiscalCode === document.getElementById("fiscalCode").value.toUpperCase()
-  );
+  fiscalCode += getControlLetter(fiscalCode);
+  return fiscalCode === document.getElementById("fiscalCode").value;
 };
 /**
  *
@@ -215,7 +210,7 @@ const getCadastralCode = (location) => {
   return cadastralCode;
 };
 
-const getControlLetter = () => {
+const getControlLetter = (fiscalCode) => {
   const characters = [
     "A",
     "B",
@@ -276,4 +271,15 @@ const getIndex = (array, value) => {
     }
   });
   return index;
+};
+
+const getCap = (town) => {
+  let ret = "";
+  towns.forEach((element) => {
+    if (element.nome == town) {
+      ret = element.cap;
+      return;
+    }
+  });
+  return ret;
 };

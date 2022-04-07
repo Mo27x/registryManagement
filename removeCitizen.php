@@ -11,18 +11,13 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "UPDATE
-cittadini
-SET
-partitaIva = '".$_POST['vatNumber']."',
-via = '".$_POST['street']."',
-civico = '".$_POST['houseNumber']."'
-WHERE
-cf = '".$_POST['fiscalCode']."';";
+$sql = 'DELETE FROM cittadini WHERE cf="'.$_POST['fiscalCode'].'"';
+
 if ($conn->query($sql) === TRUE) {
-  echo "Citizen updated successfully";
+  echo "Record deleted successfully";
 } else {
-  echo "Error updating record: " . $conn->error;
+  echo "Error deleting record: " . $conn->error;
 }
+
 $conn->close();
 ?>

@@ -21,7 +21,6 @@ $via = $_POST['street'];
 $civico = $_POST['houseNumber'];
 $codiceCatastaleNascita = $_POST['birthPlaceCadastralCode'];
 $codiceCatastaleResidenza = $_POST['residencePlaceCadastralCode'];
-
 $date = strtotime($dataNascita);
 $dataNascita = date('Y-m-d H:i:s', $date);
 
@@ -49,7 +48,6 @@ VALUES(
   '".$codiceCatastaleNascita."',
   '".$codiceCatastaleResidenza."'
 )";
-echo $sql;
 if ($conn->query($sql) === TRUE) {
   print 'true';
 } else {
