@@ -34,6 +34,8 @@ const control = () => {
         $("#birthPlace").prop("readonly", true);
         $("#town").prop("readonly", true);
         $("#fiscalCode").prop("readonly", true);
+        $("#send").remove();
+        $("#form").append('<button id="update">Update</button>');
       }
     });
   }
