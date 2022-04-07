@@ -4,6 +4,44 @@ $(document).ready(function () {
   $.get("getTown.php", function (result) {
     towns = JSON.parse(result);
   });
+  let $el = $("#birthPlace");
+  $el.empty();
+  $.each(towns, function () {
+    $el.append($("<option></option>").attr("value", this.nome).text(this.nome));
+  });
+  let $el = $("#town");
+  $el.empty();
+  $.each(towns, function () {
+    $el.append($("<option></option>").attr("value", this.nome).text(this.nome));
+  });
+});
+
+$("#update").click(() => {
+  $("#update").remove();
+  $("#from").append('<button id="cancel">Cancel</button>');
+  $("#from").append('<button id="confirm">Confirm</button>');
+});
+
+$("#cancel").click(() => {
+  $("#cancel").remove();
+  $("#confirm").remove();
+  $("#form").append('<button id="update">Update</button>');
+});
+
+$("#confirm").click(() => {
+  $("#cancel").remove();
+  $("#confirm").remove();
+  const dataToChange = {
+    street: document.getElementById("street"),
+    houseNumber: document.getElementById("houseNumber"),
+    vatNumber: document.getElementById("vatNumber"),
+    fiscalCode: document.getElementById("fiscalCode"),
+  };
+  $.post("updateCitizen.php", dataToChange, (data, status) => {
+    if (data == "true") {
+    }
+  });
+  $("#form").append('<button id="update">Update</button>');
 });
 
 const control = () => {
@@ -24,7 +62,7 @@ const control = () => {
       fiscalCode: fiscalCode,
       vatNumber: document.getElementById("vatNumber").value,
     };
-    $.post("addCitizen.php", citizen, function (data, status) {
+    $.post("addCitizen.php", citizen, (data, status) => {
       if (data == "true") {
         $("#lname").prop("readonly", true);
         $("#fname").prop("readonly", true);
@@ -70,8 +108,9 @@ const controlFiscalCode = () => {
     getDay() +
     getCadastralCode(document.getElementById("birthPlace").value);
   fiscalCode += getControlLetter();
-  console.log(fiscalCode, document.getElementById("fiscalCode").value);
-  return fiscalCode === document.getElementById("fiscalCode").value;
+  return (
+    fiscalCode === document.getElementById("fiscalCode").value.toUpperCase()
+  );
 };
 /**
  *

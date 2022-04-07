@@ -12,13 +12,13 @@ if ($conn->connect_error) {
 }
 
 $sql = "UPDATE
-`cittadini`
+cittadini
 SET
-`partitaIva` = '[value-5]',
-`via` = '[value-6]',
-`civico` = '[value-7]',
+partitaIva = '".$_POST['vatNumber']."',
+via = '".$_POST['street']."',
+civico = '".$_POST['houseNumber']."',
 WHERE
-cf = ''";
+cf = '".$_POST['fiscalCode']."'";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $comuni= [];

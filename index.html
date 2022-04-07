@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="form">
-      <form id="form" action="yeah.php" method="post" onsubmit="return control()">
+      <form id="form" method="post" onsubmit="return control()">
         <span>
           <label for="lname">Cognome: </label>
           <input type="text" name="lname" id="lname" required />
@@ -21,57 +21,54 @@
         <span>
           <label for="dateOfBirth">Data di nascita: </label>
           <input type="date" name="dateOfBirth" id="dateOfBirth" required />
-        </span>
-        <span
-        <label for="male">M</label>
-        <input type="radio" name="gender" id="male" value="M" required />
-        <label for="female">F</label>
-        <input type="radio" name="gender" id="female" value="F" />
+          <label>Sesso: </label>
+          <label for="male">M</label>
+          <input type="radio" name="gender" id="male" value="M" required />
+          <label for="female">F</label>
+          <input type="radio" name="gender" id="female" value="F" />
         </span>
         <span>
           <label for="province">Provincia: </label>
-          <select name="province" id="province"></select>
+          <input
+            type="text"
+            name="province"
+            id="province"
+            value="RN"
+            readonly
+          />
           <label for="birthPlace">Comune nascita: </label>
-          <input type="text" name="birthPlace" id="birthPlace" />
-          <!--<label for="cap">CAP: </label>
-          <input type="text" name="cap" id="cap" />-->
+          <select name="birthPlace" id="birthPlace"></select>
         </span>
         <span>
-          <label for="town">Town </label
-          ><input type="text" name="town" id="town" required />
-          <label for="street">Street </label>
+          <label for="town">Comune di residenza: </label
+          ><select name="town" id="town" required></select>
+          <label for="street">Via </label>
           <input type="text" name="street" id="street" required />
-          <label for="houseNumber">House Number</label>
+        </span>
+        <span>
+          <label for="houseNumber">Num Civico</label>
           <input type="text" name="houseNumber" id="houseNumber" required />
           <label for="cap">CAP </label
-          ><input type="number" name="cap" id="cap" required />
+          ><input type="number" name="cap" id="cap" required readonly />
         </span>
         <span>
           <label for="fiscalCode">Codice Fiscale</label>
           <input type="text" name="fiscalCode" id="fiscalCode" required />
           <label for="vatNumber">Partita IVA </label
-            ><input
-              type="text"
-              name="vatNumber"
-              id="vatNumber"
-              pattern="[0-9.]+"
-              title="Insert a number"
-              maxlength="11"
-            />
+          ><input
+            type="text"
+            name="vatNumber"
+            id="vatNumber"
+            pattern="[0-9.]+"
+            title="Insert a number"
+            maxlength="11"
+          />
         </span>
-        <input type="submit" id="send" value="manda" />
+        <input type="submit" id="send" value="Send" />
       </form>
     </div>
   </body>
 </html>
-
-
-
-
-
-
-
-
 
 <!--
 

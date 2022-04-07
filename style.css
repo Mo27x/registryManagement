@@ -12,6 +12,17 @@ input#vatNumber:invalid {
   75% {
     transform: translateX(4px);
   }
+}body {
+  background-color: rgba(149, 194, 149, 0.986);
+}
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="radio"],
+select,
+textarea {
+  background-color: rgba(166, 203, 166, 0.986);
+  accent-color: rgba(166, 203, 166, 0.986);
 }
 span {
   display: block;
@@ -24,12 +35,27 @@ label {
   margin-left: 2px;
 }
 .form {
+  background-color: rgba(183, 230, 183, 0.986);
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 30%;
   text-align: left;
-  width: 530px;
-  height: 300px;
-  border: 3px solid rgb(0, 0, 0);
-  padding: 30px;
+  width: 600px;
+  height: 450px;
+  border: 3px solid rgb(70, 96, 67);
+  padding: 40px;
+}
+input[type="submit"] {
+  background-color: rgb(100, 156, 95);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+  margin-right: 5%;
+}
+input[type="submit"]:hover {
+  background-color: rgb(130, 198, 124);
+  color: black;
 }
