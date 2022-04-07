@@ -11,10 +11,6 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-}
-
 $cf = $_POST['fiscalCode'];
 $nome = $_POST['fname'];
 $cognome = $_POST['lname'];
@@ -55,7 +51,7 @@ VALUES(
 )";
 echo $sql;
 if ($conn->query($sql) === TRUE) {
-  print 'User added';
+  print 'true';
 } else {
   echo "Error: " . $sql . "<br>" . $conn->error;
 }

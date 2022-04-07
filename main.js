@@ -25,7 +25,16 @@ const control = () => {
       vatNumber: document.getElementById("vatNumber").value,
     };
     $.post("addCitizen.php", citizen, function (data, status) {
-      console.log(data);
+      if (data == "true") {
+        $("#lname").prop("readonly", true);
+        $("#fname").prop("readonly", true);
+        $("#male").prop("readonly", true);
+        $("#female").prop("readonly", true);
+        $("#dateOfBirth").prop("readonly", true);
+        $("#birthPlace").prop("readonly", true);
+        $("#town").prop("readonly", true);
+        $("#fiscalCode").prop("readonly", true);
+      }
     });
   }
   return false;

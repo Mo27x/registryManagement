@@ -13,3 +13,23 @@ input#vatNumber:invalid {
     transform: translateX(4px);
   }
 }
+span {
+  display: block;
+  margin: 5%;
+}
+label {
+  display: inline;
+  margin-top: 5px;
+  margin-bottom: 2px;
+  margin-left: 2px;
+}
+.form {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  text-align: left;
+  width: 530px;
+  height: 300px;
+  border: 3px solid rgb(0, 0, 0);
+  padding: 30px;
+}
