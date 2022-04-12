@@ -89,6 +89,7 @@ const controlVatNumber = () => {
   const vatNumber = document.getElementById("vatNumber").value;
   if (typeof vatNumber !== "undefined" && vatNumber !== null) {
     if (vatNumber.length != 0 && vatNumber.length != 11) {
+      alert("VAT number is not correct");
       return false;
     }
   }
@@ -105,7 +106,12 @@ const controlFiscalCode = () => {
     getDay() +
     getCadastralCode(document.getElementById("birthPlace").value);
   fiscalCode += getControlLetter(fiscalCode);
-  return fiscalCode === document.getElementById("fiscalCode").value;
+  alert(
+    "Inserted fiscal code and calculated fiscal code does not match, check last name, first name, gender, date of birth and birthplace fields"
+  );
+  return (
+    fiscalCode === document.getElementById("fiscalCode").value.toUpperCase()
+  );
 };
 /**
  *
