@@ -18,17 +18,26 @@ $(document).ready(function () {
         $("<option></option>").attr("value", this.nome).text(this.nome)
       );
     });
-    const changeSelected = () => {
-      const $birth = document.querySelector("#birthPlace");
-      $birth.value = "Rimini";
-      const $residence = document.querySelector("#town");
-      $birth.value = "Rimini";
-    };
   });
   document.getElementById("town").onchange = function () {
     var value = document.getElementById("town").value;
     $("#cap").val(getCap(value));
   };
+  $("#fname").on("input", () => {
+    $("#fname").removeClass("error");
+  });
+  $("#lname").on("input", () => {
+    $("#lname").removeClass("error");
+  });
+  $("#dateOfBirth").on("input", () => {
+    $("#dateOfBirth").removeClass("error");
+  });
+  $("#fiscalCode").on("input", () => {
+    $("#fiscalCode").removeClass("error");
+  });
+  $("#birthPlace").on("input", () => {
+    $("#birthPlace").removeClass("error");
+  });
 });
 
 const control = () => {
@@ -62,6 +71,14 @@ const control = () => {
           $("#fiscalCode").prop("readonly", true);
         }
       });
+    } else {
+      $("#fname").addClass("error");
+      $("#lname").addClass("error");
+      $("#dateOfBirth").addClass("error");
+      $("#fiscalCode").addClass("error");
+      $("#birthPlace").addClass("error");
+      $("#male").addClass("error");
+      $("#female").addClass("error");
     }
   } else {
     const dataToChange = {
@@ -106,9 +123,6 @@ const controlFiscalCode = () => {
     getDay() +
     getCadastralCode(document.getElementById("birthPlace").value);
   fiscalCode += getControlLetter(fiscalCode);
-  alert(
-    "Inserted fiscal code and calculated fiscal code does not match, check last name, first name, gender, date of birth and birthplace fields"
-  );
   return (
     fiscalCode === document.getElementById("fiscalCode").value.toUpperCase()
   );

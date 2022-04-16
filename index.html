@@ -18,7 +18,6 @@
             type="text"
             name="lname"
             id="lname"
-            autocapitalize="words"
             required
           />
           <label for="fname">Nome: </label>
@@ -26,13 +25,12 @@
             type="text"
             name="fname"
             id="fname"
-            autocapitalize="words"
             required
           />
         </span>
         <span>
           <label for="dateOfBirth">Data di nascita: </label>
-          <input type="date" name="dateOfBirth" id="dateOfBirth" required />
+          <input type="date" name="dateOfBirth" id="dateOfBirth" min="1900-01-01" required />
           <label>Sesso: </label>
           <label for="male">M</label>
           <input type="radio" name="gender" id="male" value="M" required />
@@ -61,7 +59,14 @@
           <label for="houseNumber">Num Civico</label>
           <input type="text" name="houseNumber" id="houseNumber" required />
           <label for="cap">CAP </label
-          ><input type="number" name="cap" id="cap" required readonly />
+          ><input
+            type="number"
+            name="cap"
+            id="cap"
+            value="47814"
+            required
+            readonly
+          />
         </span>
         <span>
           <label for="fiscalCode">Codice Fiscale</label>
@@ -69,7 +74,7 @@
             type="text"
             name="fiscalCode"
             id="fiscalCode"
-            autocapitalize="characters"
+            maxlength="16"
             required
           />
           <label for="vatNumber">Partita IVA </label
