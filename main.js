@@ -1,11 +1,16 @@
 let towns = [];
 let fiscalCode = "";
-
+/**
+ * funzione che si occupa di creare le select con le città di residenza e di nascita
+ * recupera il cap della città di residenza selezionata e lo stampa nel campo della form
+ */
 $(document).ready(function () {
+  //richiesta in get al file php per recuperare tramite una query di select le città dal db
   $.get("getTown.php", function (result) {
     towns = JSON.parse(result);
     let $el = $("#birthPlace");
     $el.empty();
+    //aggiunta in append di tutte le città nelle select
     $.each(towns, function () {
       $el.append(
         $("<option></option>").attr("value", this.nome).text(this.nome)
@@ -19,10 +24,12 @@ $(document).ready(function () {
       );
     });
   });
+  //funzione onchange per visualizzare il cap della città selezionata nella select della form
   document.getElementById("town").onchange = function () {
     var value = document.getElementById("town").value;
     $("#cap").val(getCap(value));
   };
+  //rimozione della classe che visualizza i campi in errore
   $("#fname").on("input", () => {
     $("#fname").removeClass("error");
   });
@@ -39,7 +46,13 @@ $(document).ready(function () {
     $("#birthPlace").removeClass("error");
   });
 });
-
+/**
+ * controlla la correttezza della partita IVA e del codice fiscale
+ * per il cod fiscale fa uso di una funzione che a sua volta utilizza altre funzioni
+ * per verificare ogni dato che influisce nella creazione del codice fiscale
+ * @returns false se il controllo del codice o della p. IVA, o entrambi non sono andati a buon fine
+ * altrimenti manda una post al file php per eseguire la query di insert nel db
+ */
 const control = () => {
   if (fiscalCode === "") {
     if (controlFiscalCode() && controlVatNumber()) {
@@ -59,8 +72,11 @@ const control = () => {
         fiscalCode: fiscalCode,
         vatNumber: document.getElementById("vatNumber").value,
       };
+      //manda una richiesta con il metodo post al file php per eseguire la query di insert nel db
       $.post("addCitizen.php", citizen, (data, status) => {
         if (data == "true") {
+          //rende tutti i dati nella form che sono stati usati per il codice fiscale già
+          //controllato e corretto readonly per permettere di modificare eventuamente gli altri dati
           jQuery("#lname").prop("readonly", true);
           $("#fname").prop("readonly", true);
           $("#male").prop("readonly", true);
@@ -71,37 +87,26 @@ const control = () => {
           $("#fiscalCode").prop("readonly", true);
         }
       });
-    } else {
-      $("#fname").addClass("error");
-      $("#lname").addClass("error");
-      $("#dateOfBirth").addClass("error");
-      $("#fiscalCode").addClass("error");
-      $("#birthPlace").addClass("error");
-      $("#male").addClass("error");
-      $("#female").addClass("error");
     }
   } else {
     const dataToChange = {
+      //i dati che si possono modificare dopo l'insert
       street: document.getElementById("street").value,
       houseNumber: document.getElementById("houseNumber").value,
       vatNumber: document.getElementById("vatNumber").value,
       fiscalCode: document.getElementById("fiscalCode").value,
     };
+    //manda una richiesta post con i dati per eseguire la query di update
     $.post("updateCitizen.php", dataToChange, (data, status) => {
       alert(data);
     });
   }
   return false;
 };
-
-const isEmptyControl = (field) => {
-  const value = document.getElementById(field).value;
-  if (typeof value !== "undefined" && value !== null) {
-    return false;
-  }
-  return true;
-};
-
+/**
+ * funzione che permette di controllare i dati inseriti nel campo della partita IVA
+ * @returns l'esito del controllo
+ */
 const controlVatNumber = () => {
   const vatNumber = document.getElementById("vatNumber").value;
   if (typeof vatNumber !== "undefined" && vatNumber !== null) {
@@ -112,7 +117,11 @@ const controlVatNumber = () => {
   }
   return true;
 };
-
+/**
+ * funzione per il controllo del codice fiscale attraverso la verifica del suo algoritmo di creazione
+ * si ricrea un altro codice fiscale utilizzando i dati anagrafici necessari e seguendo l'algoritmo
+ * @returns l'esito della comparazione tra quello creato dal codice e quello inserito dall'utente
+ */
 const controlFiscalCode = () => {
   fiscalCode = "";
   fiscalCode +=
@@ -123,15 +132,26 @@ const controlFiscalCode = () => {
     getDay() +
     getCadastralCode(document.getElementById("birthPlace").value);
   fiscalCode += getControlLetter(fiscalCode);
-  return (
-    fiscalCode === document.getElementById("fiscalCode").value.toUpperCase()
-  );
+
+  if (fiscalCode === document.getElementById("fiscalCode").value.toUpperCase())
+    return true;
+  else {
+    //visualizza l'errore all'utente cambiando lo style dei campi che influenzano l'errore presente nel codice fiscale
+    $("#fname").addClass("error");
+    $("#lname").addClass("error");
+    $("#dateOfBirth").addClass("error");
+    $("#fiscalCode").addClass("error");
+    $("#birthPlace").addClass("error");
+    $("#male").addClass("error");
+    $("#female").addClass("error");
+    return false;
+  }
 };
 /**
  *
- * @param {*} id id of field
- * @param {*} lastIndex must be 3 for lname or 4 for fname
- * @returns
+ * @param {*} id dei campi nome e cognome, viene chiamata due volte
+ * @param {*} lastIndex seguendo l'algoritmo deve essere 3 per il cognome (lname) o 4 per il nome (fname)
+ * @returns la parte del codice fiscale inerente al nome e al cognome
  */
 const getNames = (id, lastIndex) => {
   let value = document.getElementById(id).value;
@@ -169,7 +189,11 @@ const getNames = (id, lastIndex) => {
     return consonants.toUpperCase();
   }
 };
-
+/**
+ * funzione che viene richiamata da getDay() per avere il sesso inserito dall'utente che andrà
+ * ad influire sulla data di nascita nel codice fiscale
+ * @returns il sesso M o F
+ */
 const getGender = () => {
   const genders = document.getElementsByName("gender");
   let gender = "";
@@ -180,7 +204,11 @@ const getGender = () => {
   }
   return gender;
 };
-
+/**
+ * funzione che aggiunge al codice fiscale la parte inerente al giorno di nascita che cambia in relazione
+ * al sesso della persona, se è maschio allora solo il numero se è femmina si aggiunge 40
+ * @returns il giorno da aggiungere al codice fiscale
+ */
 const getDay = () => {
   const gender = getGender();
   let date = document.getElementById("dateOfBirth").value;
@@ -191,7 +219,11 @@ const getDay = () => {
   }
   return gender === "M" ? day : d.getDate() + 40;
 };
-
+/**
+ * funzione che aggiunge al codice la parte inerente al mese di nascita e utilizza un array
+ * di lettere in relazione al mese
+ * @returns la lettera corrispondente al mese
+ */
 const getMonth = () => {
   let monthsLetters = [
     "A",
@@ -211,14 +243,21 @@ const getMonth = () => {
   const d = new Date(date);
   return monthsLetters[d.getMonth()];
 };
-
+/**
+ * funzione che aggiunge la parte inerenete all'anno di nascita
+ * @returns ultime due cifre dell'anno di nascita
+ */
 const getYear = () => {
   let date = document.getElementById("dateOfBirth").value;
   const d = new Date(date);
+  //conversione dell'anno in stringa e con il reverse si prende la parte significativa dell'anno da aggiungere al codice fisc
   const year = d.getFullYear().toString().split("").reverse().join("");
   return year[1] + year[0];
 };
-
+/**
+ * @param {*} location prende in input la città di nascita
+ * @returns ritorna il codice catastale della città
+ */
 const getCadastralCode = (location) => {
   let cadastralCode = "";
   towns.forEach((town) => {
@@ -229,7 +268,12 @@ const getCadastralCode = (location) => {
   });
   return cadastralCode;
 };
-
+/**
+ * questa funzione prende come parametro il codice fiscale fino ad ora ottenuto per poi applicare l'algoritmo
+ * per selezionare una lettera di controllo da aggiungere come ultimo carattere del codice fiscale
+ * @param {*} fiscalCode
+ * @returns la lettera di controllo
+ */
 const getControlLetter = (fiscalCode) => {
   const characters = [
     "A",
@@ -281,7 +325,12 @@ const getControlLetter = (fiscalCode) => {
   }
   return characters[sum % 26];
 };
-
+/**
+ *
+ * @param {*} array di caratteri presente nella funzione per la lettera di controllo
+ * @param {*} value la lettera da cercare nell'array
+ * @returns index ritorna l'indice nell'array della lettera corrispondente al parametro preso in input
+ */
 const getIndex = (array, value) => {
   let index = -1;
   array.forEach((element) => {
@@ -292,14 +341,18 @@ const getIndex = (array, value) => {
   });
   return index;
 };
-
+/**
+ * questa funzione restituisce i cap delle città
+ * @param {*} town città di residenza
+ * @returns il cap della città
+ */
 const getCap = (town) => {
-  let ret = "";
+  let cap = "";
   towns.forEach((element) => {
     if (element.nome == town) {
-      ret = element.cap;
+      cap = element.cap;
       return;
     }
   });
-  return ret;
+  return cap;
 };
